@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>       Typing Speed Test Game By Dyumna</title>
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url(checkbox.png);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .wrapper {
+            width: 90%;
+            max-width: 600px;
+            background-color: #dee2ec;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            border: 1px solid #cccccc;
+            margin-top: 20px;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #8cbaea;
+        }
+
+        .typing-text {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        .content-box {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .result-details li {
+            list-style-type: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #6fa9e7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+        }
+
+        .result-details p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <h1>TYPING SPEED GENERATOR</h1>
+        <div class="typing-text">
+            <p id="typing-paragraph">This project aims to measure your typing speed using a passage from the book ,'The Chinese Statue.' The statue had been purchased in Ha Li Chuan in 1871 and was referred to as Sotheby’s quaintly described as 'the property of a gentleman' usually meaning that some member of the aristocracy did not wish to admit that he was having to sell off one of the family heirlooms. I wondered if that was the case on this occasion and  decided to do some research to discover what had caused the little Chinese statue to find its way into the auction rooms on that Thursday morning over one hundred years later.
+            
+            
+            </p>
+        </div>
+
+        <input type="text" class="input-field" id="input-field" placeholder="Start typing ">
+        
+        <div class="content-box">
+            <ul class="result-details">
+                <li class="time">
+                    <p>Time left: </p><span id="time-left"><b>60</b>s</span>
+                </li>
+                <li class="mistake">
+                    <p>Mistakes:</p><span id="mistakes-count">0</span>
+                </li>
+                <li class="cpm">
+                    <p>CPM:</p><span id="cpm-count">0</span>
+                </li>
+            </ul>
+        </div>
+
+        <button id="try-again-btn" onclick="resetTest()">Try Again</button>
+    </div>
+
+    <script>
+       
+        const inp = document.getElementById('input-field');
+        const timeLeft = document.getElementById('time-left');
+        const mistakes = document.getElementById('mistakes-count');
+        const cpm = document.getElementById('cpm-count');
+        const para = document.getElementById('typing-paragraph').textContent;
+
+        let t, time = 60, idx = 0, errs = 0, typing = false;
+
+        function start() {
+            if (!typing) {
+                typing = true;
+                t = setInterval(updateTime, 1000); 
+            }
+
+            const typed = inp.value.charAt(idx);
+            const expected = para.charAt(idx);
+            
+            if (typed === expected) idx++; 
+            else if (typed !== '') errs++;
+
+            mistakes.textContent = errs;
+            cpm.textContent = Math.floor(idx / (60 - time) * 60);
+
+            if (idx === para.length) {
+                clearInterval(t);
+                inp.disabled = true;
+                alert(`Test complete! You made ${errs} mistakes. Your CPM is ${Math.floor(idx / (60 - time) * 60)}.`);
+            }
+        }
+
+        function updateTime() {
+            if (time > 0) {
+                time--;
+                timeLeft.innerHTML = `<b>${time}</b>s`;
+            } else {
+                clearInterval(t);
+                inp.disabled = true;
+                alert(`Time's up! You made ${errs} mistakes. Your CPM is ${Math.floor(idx / (60 - time) * 60)}.`);
+            }
+        }
+
+        function reset() {
+            time = 60;
+            idx = 0;
+            errs = 0;
+            typing = false;
+            inp.disabled = false;
+            inp.value = '';
+            timeLeft.innerHTML = `<b>${time}</b>s`;
+            mistakes.textContent = errs;
+            cpm.textContent = 0;
+        }
+
+        inp.addEventListener('input', start);
+    </script>
+
+</body>
+</html>
